@@ -1,10 +1,10 @@
 /* tslint:disable */
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { ApiConfiguration, ApiConfigurationInterface } from './api-configuration';
+import { LibConfiguration, LibConfigurationInterface } from './lib-configuration';
 
 /**
- * Provider for all Api services, plus ApiConfiguration
+ * Provider for all Api services, plus LibConfiguration
  */
 @NgModule({
   imports: [
@@ -15,16 +15,16 @@ import { ApiConfiguration, ApiConfigurationInterface } from './api-configuration
   ],
   declarations: [],
   providers: [
-    ApiConfiguration
+    LibConfiguration
      ],
 })
 export class ApiModule {
-  static forRoot(customParams: ApiConfigurationInterface): ModuleWithProviders {
+  static forRoot(customParams: LibConfigurationInterface): ModuleWithProviders {
     return {
       ngModule: ApiModule,
       providers: [
         {
-          provide: ApiConfiguration,
+          provide: LibConfiguration,
           useValue: {
                         rootUrl: customParams.rootUrl,
                         grant_type: customParams.grant_type,

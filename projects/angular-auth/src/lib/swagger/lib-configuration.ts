@@ -7,14 +7,14 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class ApiConfiguration {
+export class LibConfiguration {
   rootUrl: string = '';
   grant_type: string = '';
   client_id: string = '';
   client_secret: string = '';
 }
 
-export interface ApiConfigurationInterface {
+export interface LibConfigurationInterface {
   rootUrl?: string;
   grant_type?: string;
   client_id?: string;

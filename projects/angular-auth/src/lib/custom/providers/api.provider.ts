@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {ApiConfiguration} from "../../swagger/api-configuration";
+import {LibConfiguration} from "../../swagger/lib-configuration";
 
 
 @Injectable({
@@ -13,7 +13,7 @@ export class ApiProvider
 
     constructor(
         public http: HttpClient,
-        protected config: ApiConfiguration
+        protected config: LibConfiguration
     )
     {
         this.url = this.config.rootUrl;

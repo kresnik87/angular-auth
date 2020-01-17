@@ -1,6 +1,6 @@
 /* tslint:disable */
 import { HttpClient, HttpParameterCodec, HttpParams } from '@angular/common/http';
-import { ApiConfiguration } from './api-configuration';
+import { LibConfiguration } from './lib-configuration';
 
 /**
  * Custom parameter codec to correctly handle the plus sign in parameter
@@ -30,7 +30,7 @@ const PARAMETER_CODEC = new ParameterCodec();
  */
 export class BaseService {
   constructor(
-    protected config: ApiConfiguration,
+    protected config: LibConfiguration,
     protected http: HttpClient
   ) {
   }
@@ -39,7 +39,7 @@ export class BaseService {
 
   /**
    * Returns the root url for API operations. If not set directly in this
-   * service, will fallback to ApiConfiguration.rootUrl.
+   * service, will fallback to LibConfiguration.rootUrl.
    */
   get rootUrl(): string {
     return this._rootUrl || this.config.rootUrl;

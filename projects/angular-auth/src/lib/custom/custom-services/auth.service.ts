@@ -4,7 +4,7 @@ import {AuthModel} from '../custom-models/auth.model';
 
 export {AuthModel}
 import {ApiProvider} from '../providers';
-import {ApiConfiguration} from "../../swagger/api-configuration";
+import {LibConfiguration} from "../../swagger/lib-configuration";
 
 import {STORAGE_KEY_LOGIN, STORAGE_KEY_AUTH, USER_EVENT_CHANGE} from '../hooks';
 
@@ -13,11 +13,11 @@ import {STORAGE_KEY_LOGIN, STORAGE_KEY_AUTH, USER_EVENT_CHANGE} from '../hooks';
 })
 export class AuthService extends BaseCustomService
 {
-    private _config: ApiConfiguration;
+    private _config: LibConfiguration;
 
     constructor(
         private api_provider: ApiProvider,
-        protected config: ApiConfiguration
+        protected config: LibConfiguration
     )
     {
         super();

@@ -25,6 +25,7 @@ export class AngularAuthModule
         lib.grant_type = rootEnv.grant_type;
         lib.client_id = rootEnv.client_id;
         lib.client_secret = rootEnv.client_secret;
+        lib.default_routes = rootEnv.default_routes;
 
       };
     }

@@ -1,24 +1,58 @@
-# AngularAuth
+# Ksk-AngularAuth
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.3.
 
-## Code scaffolding
+## Installation
 
-Run `ng generate component component-name --project angular-auth` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project angular-auth`.
-> Note: Don't forget to add `--project angular-auth` or else it will be added to the default project in your `angular.json` file. 
+```bash
+npm i @kresnik87/angular-auth
+```
+###Usage
+ Setup in app.module.ts
+```
+import {AngularAuthModule, LibConfiguration} from '@kresnik87/angular-auth';
+import {NgModule, Provider, APP_INITIALIZER} from '@angular/core';
 
-## Build
+ export const config: LibConfiguration = {
+    rootUrl: environment.backendUrl,
+    client_secret: environment.clientSecret,
+    grant_type: environment.grant_type,
+    client_id: environment.clientId,
+    default_routes:environment.default_routes
+};
 
-Run `ng build angular-auth` to build the project. The build artifacts will be stored in the `dist/` directory.
+function initLibConfiguration(lib: LibConfiguration)
+{
+    return () =>
+    {
+        lib.rootUrl = environment.backendUrl;
+        lib.grant_type = environment.grant_type;
+        lib.client_id = environment.clientId
+        lib.client_secret = environment.clientSecret;
+        lib.default_routes = environment.default_routes
+    };
+}
 
-## Publishing
+export const INIT_ENVIRONMENT: Provider = {
+    provide: APP_INITIALIZER,
+    useFactory: initLibConfiguration,
+    deps: [LibConfiguration],
+    multi: true
+};
 
-After building your library with `ng build angular-auth`, go to the dist folder `cd dist/angular-auth` and run `npm publish`.
+@NgModule({
+    declarations: [...],
+    entryComponents: [
+    ],
+    imports: [
+        AngularAuthModule.forRoot(config),
+        ...
+    ],
+    providers: [
+        INIT_ENVIRONMENT,
+        ...
+    ],
+    bootstrap: [...]
+})
+```
+### Configuration Variables
 
-## Running unit tests
-
-Run `ng test angular-auth` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).

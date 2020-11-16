@@ -12,6 +12,7 @@ export class LibConfiguration {
   grant_type: string = '';
   client_id: string = '';
   client_secret: string = '';
+  default_routes:boolean = true;
 }
 
 export interface LibConfigurationInterface {
@@ -19,4 +20,5 @@ export interface LibConfigurationInterface {
   grant_type?: string;
   client_id?: string;
   client_secret?: string;
+  default_routes?: boolean;
 }

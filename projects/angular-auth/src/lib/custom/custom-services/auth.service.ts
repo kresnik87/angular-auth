@@ -1,125 +1,132 @@
 import {Injectable} from '@angular/core';
 import {BaseCustomService} from './base-custom.service';
 import {AuthModel} from '../custom-models/auth.model';
-
-export {AuthModel}
 import {ApiProvider} from '../providers';
 import {LibConfiguration} from "../../swagger/lib-configuration";
 
-import {STORAGE_KEY_LOGIN, STORAGE_KEY_AUTH, USER_EVENT_CHANGE} from '../hooks';
+import {STORAGE_KEY_AUTH, STORAGE_KEY_LOGIN} from '../hooks';
+
+const default_login_path="api/login";
+const default_logout_path="api/logout";
+export {AuthModel}
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class AuthService extends BaseCustomService
 {
-    private _config: LibConfiguration;
+  private _config: LibConfiguration;
+  private _url:string;
 
-    constructor(
-        private api_provider: ApiProvider,
-        protected config: LibConfiguration
-    )
+  constructor(
+    private api_provider: ApiProvider,
+    protected config: LibConfiguration
+  )
+  {
+    super();
+    this._config = this.config
+  }
+
+  logout(url_custom?:string)
+  {
+    this._config.default_routes ? this._url = default_logout_path: this._url = url_custom;
+    return new Promise((resolve, reject) =>
     {
-        super();
-        this._config = this.config
-    }
-
-    logout()
-    {
-
-        return new Promise((resolve, reject) =>
+      this.api_provider.post(this._url).subscribe(
+        (resp: any) =>
         {
-            this.api_provider.post('api/logout').subscribe(
-                (resp: any) =>
-                {
-                    this.clearLocal();
-                    //                            this.events.publish(USER_EVENT_CHANGE);
-                    resolve(resp);
-                },
-                (err) =>
-                {
-                    this.clearLocal();
-                    //                    this.events.publish(USER_EVENT_CHANGE);
-                    reject(err);
-                }
-            );
-        });
-    }
-
-    login(username: string, password: string)
-    {
-        var body = {
-            "username": username,
-            "password": password,
-            "grant_type": this._config.grant_type,
-            "client_id": this._config.client_id,
-            "client_secret": this._config.client_secret
-        };
-
-        return new Promise<AuthModel>((resolve, reject) =>
+          this.clearLocal();
+          //                            this.events.publish(USER_EVENT_CHANGE);
+          resolve(resp);
+        },
+        (err) =>
         {
-            this.api_provider.form('api/login', body).subscribe(
-                (resp: any) =>
-                {
-                    let auth = new AuthModel();
-                    auth.initialize(resp);
-                    this.setLocalAuth(auth);
-                    resolve(auth);
-                },
-                (err) =>
-                {
-                    reject(err);
-                }
-            );
-        });
-    }
-
-
-    storeLogin(username: string, password: string)
-    {
-        this.setLocal(STORAGE_KEY_LOGIN, {
-            'username': username,
-            'password': password,
-        });
-        //            this.events.publish(STORAGE_KEY_LOGIN);
-
-    }
-
-    getLogin()
-    {
-        return this.getLocal(STORAGE_KEY_LOGIN);
-    }
-
-    getLocalAuth(): AuthModel
-    {
-        let auth = this.getLocal(STORAGE_KEY_AUTH);
-
-        let obj: AuthModel = new AuthModel();
-        obj.initialize(auth);
-        return obj;
-    }
-
-    setLocalAuth(auth: AuthModel)
-    {
-        this.setLocal(STORAGE_KEY_AUTH, auth);
-        return this;
-    }
-
-    isGranted(): boolean
-    {
-        let auth = this.getLocalAuth();
-        if (auth)
-        {
-            if (auth.getAccess_token() && !auth.tokenExpired())
-            {
-                return true;
-            } else
-            {
-                return false;
-            }
-        } else
-        {
-            return false;
+          this.clearLocal();
+          //                    this.events.publish(USER_EVENT_CHANGE);
+          reject(err);
         }
+      );
+    });
+  }
+
+  login(username: string, password: string, url?:string)
+  {
+    var body = {
+      "username": username,
+      "password": password,
+      "grant_type": this._config.grant_type,
+      "client_id": this._config.client_id,
+      "client_secret": this._config.client_secret
+    };
+    this._config.default_routes ? this._url = default_login_path: this._url = url;
+    return new Promise<AuthModel>((resolve, reject) =>
+    {
+      this.api_provider.form('api/login', body).subscribe(
+        (resp: any) =>
+        {
+          let auth = new AuthModel();
+          auth.initialize(resp);
+          this.setLocalAuth(auth);
+          resolve(auth);
+        },
+        (err) =>
+        {
+          reject(err);
+        }
+      );
+    });
+  }
+
+
+  storeLogin(username: string, password: string)
+  {
+    this.setLocal(STORAGE_KEY_LOGIN, {
+      'username': username,
+      'password': password,
+    });
+    //            this.events.publish(STORAGE_KEY_LOGIN);
+
+  }
+
+
+  getLogin()
+  {
+    return this.getLocal(STORAGE_KEY_LOGIN);
+  }
+
+  getLocalAuth(): AuthModel
+  {
+    let auth = this.getLocal(STORAGE_KEY_AUTH);
+
+    let obj: AuthModel = new AuthModel();
+    obj.initialize(auth);
+    return obj;
+  }
+
+  setLocalAuth(auth: AuthModel)
+  {
+    this.setLocal(STORAGE_KEY_AUTH, auth);
+    return this;
+  }
+
+  isGranted(): boolean
+  {
+    let auth = this.getLocalAuth();
+    if (auth)
+    {
+      if (auth.getAccess_token() && !auth.tokenExpired())
+      {
+        return true;
+      } else
+      {
+        return false;
+      }
+    } else
+    {
+      return false;
     }
+  }
+
+
+
 }

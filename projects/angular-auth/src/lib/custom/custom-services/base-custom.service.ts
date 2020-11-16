@@ -15,35 +15,35 @@ export class BaseCustomService
     }
 
 
-    getLocal(key: string)
-    {
-        let result = JSON.parse(localStorage.getItem(key));
-        return result;
-    }
+  getLocal(key: string)
+  {
+    let result = JSON.parse(localStorage.getItem(key));
+    return result;
+  }
 
-    setLocal(key: string, item: any)
+  setLocal(key: string, item: any)
+  {
+    localStorage.setItem(key, JSON.stringify(item));
+    return this;
+  }
+
+  clearLocal()
+  {
+    let returned: number = 0;
+    let todelete = [
+      STORAGE_KEY_AUTH, STORAGE_KEY_USER
+    ];
+    for (let item of todelete)
     {
-        localStorage.setItem(key, JSON.stringify(item));
+      this.removeLocal(item);
+      returned++;
+      if (returned >= todelete.length)
+      {
         return this;
-    }
+      }
 
-    clearLocal()
-    {
-        let returned: number = 0;
-        let todelete = [
-            STORAGE_KEY_AUTH, STORAGE_KEY_USER
-        ];
-        for (let item of todelete)
-        {
-            this.removeLocal(item);
-            returned++;
-            if (returned >= todelete.length)
-            {
-                return this;
-            }
-
-        }
     }
+  }
 
     removeLocal(key: string)
     {

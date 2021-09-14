@@ -30,7 +30,8 @@ export class ApiModule {
                         grant_type: customParams.grant_type,
                         client_id: customParams.client_id,
                         client_secret: customParams.client_secret,
-                        default_routes: customParams.default_routes
+                        default_routes: customParams.default_routes,
+                        oauthMode: customParams.oauthMode
                       }
         }
       ]

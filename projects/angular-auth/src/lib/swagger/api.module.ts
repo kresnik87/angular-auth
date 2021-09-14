@@ -19,7 +19,7 @@ import { LibConfiguration, LibConfigurationInterface } from './lib-configuration
      ],
 })
 export class ApiModule {
-  static forRoot(customParams: LibConfigurationInterface): ModuleWithProviders {
+  static forRoot(customParams: LibConfigurationInterface): ModuleWithProviders<ApiModule> {
     return {
       ngModule: ApiModule,
       providers: [

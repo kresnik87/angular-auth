@@ -13,6 +13,7 @@ export class LibConfiguration {
   client_id: string = '';
   client_secret: string = '';
   default_routes:boolean = true;
+  oauthMode:boolean = true;
 }
 
 export interface LibConfigurationInterface {
@@ -21,4 +22,5 @@ export interface LibConfigurationInterface {
   client_id?: string;
   client_secret?: string;
   default_routes?: boolean;
+  oauthMode?:boolean;
 }

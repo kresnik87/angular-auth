@@ -1,46 +1,40 @@
 import {Injectable} from '@angular/core';
 import {BaseCustomService} from './base-custom.service';
-import {AuthModel} from '../custom-models/auth.model';
+import {AuthModel} from '../custom-models';
 import {ApiProvider} from '../providers';
 import {LibConfiguration} from "../../swagger/lib-configuration";
 
 import {STORAGE_KEY_AUTH, STORAGE_KEY_LOGIN} from '../hooks';
 
-const default_login_path="api/login";
-const default_logout_path="api/logout";
+const default_login_path = "api/login";
+const default_logout_path = "api/logout";
 export {AuthModel}
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService extends BaseCustomService
-{
+export class AuthService extends BaseCustomService {
   private _config: LibConfiguration;
-  private _url:string;
+  private _url: string;
 
   constructor(
     private api_provider: ApiProvider,
     protected config: LibConfiguration
-  )
-  {
+  ) {
     super();
     this._config = this.config
   }
 
-  logout(url_custom?:string)
-  {
-    this._config.default_routes ? this._url = default_logout_path: this._url = url_custom;
-    return new Promise((resolve, reject) =>
-    {
+  logout(url_custom?: string) {
+    this._config.default_routes ? this._url = default_logout_path : this._url = url_custom;
+    return new Promise((resolve, reject) => {
       this.api_provider.post(this._url).subscribe(
-        (resp: any) =>
-        {
+        (resp: any) => {
           this.clearLocal();
           //                            this.events.publish(USER_EVENT_CHANGE);
           resolve(resp);
         },
-        (err) =>
-        {
+        (err) => {
           this.clearLocal();
           //                    this.events.publish(USER_EVENT_CHANGE);
           reject(err);
@@ -49,28 +43,33 @@ export class AuthService extends BaseCustomService
     });
   }
 
-  login(username: string, password: string, url?:string)
-  {
-    var body = {
-      "username": username,
-      "password": password,
-      "grant_type": this._config.grant_type,
-      "client_id": this._config.client_id,
-      "client_secret": this._config.client_secret
-    };
-    this._config.default_routes ? this._url = default_login_path: this._url = url;
-    return new Promise<AuthModel>((resolve, reject) =>
-    {
-      this.api_provider.form('api/login', body).subscribe(
-        (resp: any) =>
-        {
+  login(username: string, password: string, endpoint?: string) {
+    let body: any;
+    if (this._config.oauthMode) {
+      body = {
+        "username": username,
+        "password": password,
+        "grant_type": this._config.grant_type,
+        "client_id": this._config.client_id,
+        "client_secret": this._config.client_secret
+      };
+    }else{
+      body = {
+        "username": username,
+        "password": password
+      };
+    }
+
+    this._config.default_routes ? this._url = default_login_path : this._url = endpoint;
+    return new Promise<AuthModel>((resolve, reject) => {
+      this.api_provider.form(this._url, body).subscribe(
+        (resp: any) => {
           let auth = new AuthModel();
           auth.initialize(resp);
           this.setLocalAuth(auth);
           resolve(auth);
         },
-        (err) =>
-        {
+        (err) => {
           reject(err);
         }
       );
@@ -78,8 +77,7 @@ export class AuthService extends BaseCustomService
   }
 
 
-  storeLogin(username: string, password: string)
-  {
+  storeLogin(username: string, password: string) {
     this.setLocal(STORAGE_KEY_LOGIN, {
       'username': username,
       'password': password,
@@ -89,13 +87,11 @@ export class AuthService extends BaseCustomService
   }
 
 
-  getLogin()
-  {
+  getLogin() {
     return this.getLocal(STORAGE_KEY_LOGIN);
   }
 
-  getLocalAuth(): AuthModel
-  {
+  getLocalAuth(): AuthModel {
     let auth = this.getLocal(STORAGE_KEY_AUTH);
 
     let obj: AuthModel = new AuthModel();
@@ -103,30 +99,23 @@ export class AuthService extends BaseCustomService
     return obj;
   }
 
-  setLocalAuth(auth: AuthModel)
-  {
+  setLocalAuth(auth: AuthModel) {
     this.setLocal(STORAGE_KEY_AUTH, auth);
     return this;
   }
 
-  isGranted(): boolean
-  {
+  isGranted(): boolean {
     let auth = this.getLocalAuth();
-    if (auth)
-    {
-      if (auth.getAccess_token() && !auth.tokenExpired())
-      {
+    if (auth) {
+      if (auth.getAccess_token() && !auth.tokenExpired()) {
         return true;
-      } else
-      {
+      } else {
         return false;
       }
-    } else
-    {
+    } else {
       return false;
     }
   }
-
 
 
 }

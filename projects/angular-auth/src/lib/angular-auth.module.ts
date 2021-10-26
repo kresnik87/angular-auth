@@ -15,7 +15,7 @@ import {LibConfiguration, LibConfigurationInterface} from "./swagger/lib-configu
 })
 export class AngularAuthModule
 {
-  static forRoot(rootEnv: LibConfigurationInterface): ModuleWithProviders
+  static forRoot(rootEnv: LibConfigurationInterface): ModuleWithProviders<ApiModule>
   {
     function initEnvironment(lib: LibConfigurationInterface)
     {
@@ -26,6 +26,7 @@ export class AngularAuthModule
         lib.client_id = rootEnv.client_id;
         lib.client_secret = rootEnv.client_secret;
         lib.default_routes = rootEnv.default_routes;
+        lib.oauthMode = rootEnv.oauthMode;
 
       };
     }

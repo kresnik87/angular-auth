@@ -43,7 +43,7 @@ export class AuthService extends BaseCustomService {
     });
   }
 
-  login(username: string, password: string, endpoint?: string) {
+  login(username: string, password: string, endpoint?: string,options?:boolean) {
     let body: any;
     if (this._config.oauthMode) {
       body = {
@@ -62,17 +62,32 @@ export class AuthService extends BaseCustomService {
 
     this._config.default_routes ? this._url = default_login_path : this._url = endpoint;
     return new Promise<AuthModel>((resolve, reject) => {
-      this.api_provider.form(this._url, body).subscribe(
-        (resp: any) => {
-          let auth = new AuthModel();
-          auth.initialize(resp);
-          this.setLocalAuth(auth);
-          resolve(auth);
-        },
-        (err) => {
-          reject(err);
-        }
-      );
+      if(options){
+        this.api_provider.form(this._url, body).subscribe(
+          (resp: any) => {
+            let auth = new AuthModel();
+            auth.initialize(resp);
+            this.setLocalAuth(auth);
+            resolve(auth);
+          },
+          (err) => {
+            reject(err);
+          }
+        );
+      }else{
+        this.api_provider.post(this._url, body).subscribe(
+          (resp: any) => {
+            let auth = new AuthModel();
+            auth.initialize(resp);
+            this.setLocalAuth(auth);
+            resolve(auth);
+          },
+          (err) => {
+            reject(err);
+          }
+        );
+      }
+
     });
   }
 

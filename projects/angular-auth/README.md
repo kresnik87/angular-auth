@@ -58,3 +58,27 @@ export const INIT_ENVIRONMENT: Provider = {
 ```
 ### Configuration Variables
 
+### Example
+```
+export class LoginComponent implements OnInit {
+  public email: string;
+  public password: string;
+
+  constructor(
+    private authService: AuthService
+  ) {
+  }
+
+  ngOnInit(): void {
+  }
+
+  public login() {
+    this.authService.login(this.email, this.password, environment.auth_endpoint).then((resp) => {
+     console.log(resp);
+    }, reason => {
+      console.log(reason);
+    })
+  }
+}
+```
+

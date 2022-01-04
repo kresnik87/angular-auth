@@ -5,6 +5,7 @@ import {ApiProvider} from '../providers';
 import {LibConfiguration} from "../../swagger/lib-configuration";
 
 import {STORAGE_KEY_AUTH, STORAGE_KEY_LOGIN} from '../hooks';
+import {AuthConfigInterface} from "../interfaces";
 
 const default_login_path = "api/login";
 const default_logout_path = "api/logout";
@@ -43,7 +44,7 @@ export class AuthService extends BaseCustomService {
     });
   }
 
-  login(username: string, password: string, endpoint?: string,options?:boolean) {
+  login(username: string, password: string, authConfig?: AuthConfigInterface) {
     let body: any;
     if (this._config.oauthMode) {
       body = {
@@ -53,16 +54,16 @@ export class AuthService extends BaseCustomService {
         "client_id": this._config.client_id,
         "client_secret": this._config.client_secret
       };
-    }else{
+    } else {
       body = {
         "username": username,
         "password": password
       };
     }
-
-    this._config.default_routes ? this._url = default_login_path : this._url = endpoint;
+    authConfig.customBody? body = authConfig.body : body;
+    this._config.default_routes ? this._url = default_login_path : this._url = authConfig.endpoint;
     return new Promise<AuthModel>((resolve, reject) => {
-      if(options){
+      if (authConfig.options) {
         this.api_provider.form(this._url, body).subscribe(
           (resp: any) => {
             let auth = new AuthModel();
@@ -74,7 +75,7 @@ export class AuthService extends BaseCustomService {
             reject(err);
           }
         );
-      }else{
+      } else {
         this.api_provider.post(this._url, body).subscribe(
           (resp: any) => {
             let auth = new AuthModel();

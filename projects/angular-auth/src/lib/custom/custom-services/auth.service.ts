@@ -60,11 +60,11 @@ export class AuthService extends BaseCustomService {
         "password": password
       };
     }
-
+    authConfig.customBody? body = authConfig.body : body;
     this._config.default_routes ? this._url = default_login_path : this._url = authConfig.endpoint;
     return new Promise<AuthModel>((resolve, reject) => {
       if (authConfig.options) {
-        this.api_provider.form(this._url, authConfig.customBody ? authConfig.body : body).subscribe(
+        this.api_provider.form(this._url, body).subscribe(
           (resp: any) => {
             let auth = new AuthModel();
             auth.initialize(resp);
